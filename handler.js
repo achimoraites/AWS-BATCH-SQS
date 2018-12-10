@@ -33,13 +33,14 @@ module.exports.batchInsert = async () => {
       // if true it's time to send a batch!
       if (i % 5 == 0) {
       // send batch
+        console.log(params(books));
         actions.push(sqs.sendMessageBatch(params(books)).promise());
         // delete contents so far
         books = [];
       }
     }
     // in case we still have some books
-    if(books.length > 0) {
+    if (books.length > 0) {
       actions.push(sqs.sendMessageBatch(params(books)).promise());
     }
 

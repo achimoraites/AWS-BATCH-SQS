@@ -2,17 +2,11 @@
 module.exports = {
 
   // sqs batch send entry
-  entry (id, book) {
+  entry (i, book) {
     return {
-      Id: `batch ${id}`, /* required */
+      Id: `batch_${i}`, /* required */
       MessageBody: JSON.stringify(book), /* required */
-      DelaySeconds: 0,
-      MessageAttributes: {
-        '<String>': {
-          DataType: 'String', /* required */
-          StringValue: 'STRING_VALUE'
-        }
-      }
+      DelaySeconds: 0
     };
   }
 
