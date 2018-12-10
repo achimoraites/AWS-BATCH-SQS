@@ -20,6 +20,10 @@ service: batch-sqs # NOTE: update this with your service name
 provider:
   name: aws
   runtime: nodejs8.10
+  memorySize: 128
+  profile: learner
+  region: eu-central-1
+  stage: dev
 
 # you can overwrite defaults here
 #  stage: dev
@@ -55,8 +59,8 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  batchInsert:
+    handler: handler.batchInsert
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
