@@ -35,6 +35,10 @@ module.exports.batchInsert = async () => {
         books = [];
       }
     }
+    // in case we still have some books
+    if(books.length > 0) {
+      actions.push(sqs.sendMessageBatch(params(books)).promise());
+    }
 
     await Promise.all(actions);
 
