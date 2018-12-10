@@ -16,7 +16,8 @@ module.exports.batchInsert = async () => {
 
   try {
    
-    // params for a batch send
+    // params for a batch send sendMessageBatch
+
     const params = (Entries) => ({
       Entries,
       QueueUrl: process.env.QUEUEURL /* required */
@@ -27,7 +28,9 @@ module.exports.batchInsert = async () => {
     let books = [];
     const actions = [];
     for (let i=0;i<numberOfBooks;i++) {
+      // add the book as an sqs entry for sendMessageBatch
       books.push( entry(i, {isbn: uuid.v4(),title: `title#${uuid.v1()}`}) );
+      // if true it's time to send a batch!
       if (i % 5 == 0) {
       // send batch
         actions.push(sqs.sendMessageBatch(params(books)).promise());
