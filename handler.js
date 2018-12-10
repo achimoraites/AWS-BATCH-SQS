@@ -6,7 +6,7 @@ const uuid = require('uuid');
 const { entry } = require('./helpers/sqsHelper');
 
 // inserts books in the queue
-module.exports.batchInsert = async event => {
+module.exports.batchInsert = async () => {
 
   // 1) Send a number of books to the sqs queue
   // 2) queueProcessor pulls the data from the queue
