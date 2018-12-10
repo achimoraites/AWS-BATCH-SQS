@@ -36,6 +36,8 @@ module.exports.batchInsert = async event => {
     }
   }
 
+  await Promise.all(actions);
+
 
 
 
