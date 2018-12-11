@@ -2,12 +2,30 @@ const AWS = require('aws-sdk');
 const sqs = new AWS.SQS();
 const uuid = require('uuid');
 
-// local  helpers
+// LOCAL HELPERS
+
+// sendMessageBatch params for an array of entries
+/**
+   * sendMessageBatch params for an array of entries
+   * @param Entries the entries array to send in a batch
+   * @returns Object
+   */
 const params = (Entries) => ({
   Entries,
   QueueUrl: process.env.QUEUEURL /* required */
 });
+
 // sqs batch send entry
+/**
+   * Creates an entry for sqs sendMessageBatch the function configures the delay
+   * so the messages can be sent in a way that will not exceed the dynamodb limits .
+   * If batchSize is 5 then every 5 entries will have a delay that is the same multiple of 5
+   * first 5 will have a delay of 5, next 5 will have 10 and so on..
+   * @param i the number of the element's position 
+   * @param book the element that will be inserted
+   * @param batchSize the size of each batch : this value is used to dynamically configure the delay
+   * @returns Object
+   */
 const entry = (i, book, batchSize) => {
   return {
     Id: `batch_${i}`, /* required */
