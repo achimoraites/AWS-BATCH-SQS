@@ -8,11 +8,12 @@ const params = (Entries) => ({
   QueueUrl: process.env.QUEUEURL /* required */
 });
 // sqs batch send entry
-const entry = (i, book) => {
+const entry = (i, book, batchSize) => {
   return {
     Id: `batch_${i}`, /* required */
     MessageBody: JSON.stringify(book), /* required */
-    DelaySeconds: i
+    // returns the nearest multiple of batchSize for delayment
+    DelaySeconds: Math.ceil(i/batchSize) * batchSize
   };
 };
 
@@ -31,7 +32,7 @@ module.exports = {
     const actions = [];
     for (let i=0;i<numOfElements;i++) {
       // add the book as an sqs entry for sendMessageBatch
-      books.push( entry(i, {isbn: uuid.v4(),title: `title#${uuid.v1()}`}) );
+      books.push( entry(i, {isbn: uuid.v4(),title: `title#${uuid.v1()}`}, batchSize) );
       // if true it's time to send a batch!
       if (i % batchSize == 0) {
       // send batch
