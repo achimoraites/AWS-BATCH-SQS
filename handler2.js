@@ -5,6 +5,7 @@ const dynamoDC = new AWS.DynamoDB.DocumentClient({});
 // const { sendBatchedMessages } = require('./helpers/sqsHelper');
 
 // gets books from the queue and insert them in table
+// sends an email via sns to notify the user
 module.exports.queueProcessor = async event => {
 
   // queueProcessor pulls the data from the queue
