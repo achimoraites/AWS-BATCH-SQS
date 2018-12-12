@@ -1,8 +1,7 @@
 'use strict';
-const AWS = require('aws-sdk');
-const dynamoDC = new AWS.DynamoDB.DocumentClient({});
-// helper
+// helpers
 const { publish, deleteTopic } = require('./helpers/snsHelper');
+const { batchWrite } = require('./helpers/dynamodbHelper');
 
 // gets books from the queue and insert them in table
 // sends an email via sns to notify the user
@@ -13,19 +12,14 @@ module.exports.queueProcessor = async event => {
   // the data are inserted gradually to avoid exceeding dynamodb limits
   // ------------------------------------------------------------------------------------ //
 
-  const params = ({isbn, title}) => ({
-    TableName: process.env.TABLE_NAME,
-    Item: {
-      isbn,
-      title
-    }
-  }); 
-
+  let topic = null;
   try {
     // read records from the queue
     const { Records } = event;
+    const Books = [];
     const actions = [];
-    let topic = null;
+    
+
     Records.forEach(record => {
       const recordObj = JSON.parse(record.body);
       // if true we are done
@@ -34,18 +28,14 @@ module.exports.queueProcessor = async event => {
         topic = recordObj.topic;
         // send email to user
         actions.push(publish('Your books have been inserted!',topic));
-       
         return;
       }
-      // insert to dynamodb table
-      actions.push( dynamoDC.put(params(recordObj)).promise() );
+      Books.push(recordObj);
     });
 
+    actions.push(batchWrite(Books));
     await Promise.all(actions);
 
-    // remove topic if exists
-    if (topic) await deleteTopic(topic);
-    
     
 
     return {
@@ -56,11 +46,14 @@ module.exports.queueProcessor = async event => {
     };
    
   } catch (error) {
+    await publish(`Error : ${error}`,topic);
     return {
       statusCode: 400,
       error
     };
+  } finally {
+    // remove topic if exists
+    if (topic) await deleteTopic(topic);
   }
-
 
 };
