@@ -31,10 +31,10 @@ module.exports.queueProcessor = async event => {
       }
       Books.push(recordObj);
     });
-
-    actions.push(batchWrite(Books));
-    await Promise.all(actions);
     
+    if (Books.length > 0) actions.push(batchWrite(Books));
+    await Promise.all(actions);
+
     return {
       statusCode: 200,
       body: {
@@ -48,6 +48,7 @@ module.exports.queueProcessor = async event => {
       statusCode: 400,
       error
     };
+
   } finally {
     // remove topic if exists
     if (topic) await deleteTopic(topic);
