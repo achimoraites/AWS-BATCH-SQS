@@ -17,7 +17,7 @@ module.exports.batchInsert = async () => {
     // ------------------------------------------------------------------------------------ //
 
     // send 100 books with a batch size of 5
-    //  await sendBatchedMessages(100, 5);
+    await sendBatchedMessages(100, 5);
     return {
       statusCode: 200,
       body: {
