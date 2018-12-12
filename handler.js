@@ -1,8 +1,7 @@
 'use strict';
-const AWS = require('aws-sdk');
-const sns = new AWS.SNS();
-// helper
+// helpers
 const { sendBatchedMessages } = require('./helpers/sqsHelper');
+const { subscribeToTopic } = require('./helpers/snsHelper');
 
 // inserts books in the queue
 module.exports.batchInsert = async () => {
@@ -15,13 +14,7 @@ module.exports.batchInsert = async () => {
     // const topic = await sns.createTopic(params).promise();
 
     // subscribe user
-    const params = {
-      Protocol: 'EMAIL', /* required */
-      TopicArn: process.env.TOPIC, /* required */
-      Endpoint: user_email
-    };
-    await sns.subscribe(params).promise();
-   
+    await subscribeToTopic(user_email, process.env.TOPIC);
     // ------------------------------------------------------------------------------------ //
 
     // send 100 books with a batch size of 5
