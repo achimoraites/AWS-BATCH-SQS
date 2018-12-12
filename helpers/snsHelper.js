@@ -1,13 +1,27 @@
 const AWS = require('aws-sdk');
-const sns = new AWS.SNS();
+const sns = new AWS.SNS({apiVersion: '2010-03-31'});
 
-module.exports = { 
-  subscribeToTopic(email,TopicArn) {
-    const params = {
-      Protocol: 'EMAIL', /* required */
-      TopicArn, /* required */
-      Endpoint: email
-    };
-    return sns.subscribe(params).promise();
+// LOCAL HELPERS
+const params = (Protocol, TopicArn, Endpoint) => ({
+  Protocol, /* required */
+  TopicArn, /* required */
+  Endpoint
+});
+
+module.exports = {
+
+  // this does not work
+  createEmailTopic(Name) {
+    return sns.createTopic({Name}).promise();
+  },     
+  subscribeEmail(email,TopicArn) {
+    return sns.subscribe(params('EMAIL',TopicArn, email)).promise();
+  },     
+  subscribeLambda(lambda,TopicArn) {
+    return sns.subscribe(params('labda',TopicArn, lambda)).promise();
+  },
+  unsubscribe(SubscriptionArn) {
+    return sns.subscribe({ SubscriptionArn }).promise();
   }
+
 };
