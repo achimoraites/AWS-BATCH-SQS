@@ -21,7 +21,7 @@ module.exports = {
     return sns.subscribe(params('labda',TopicArn, lambda)).promise();
   },
   unsubscribe(SubscriptionArn) {
-    return sns.subscribe({ SubscriptionArn }).promise();
+    return sns.unsubscribe({ SubscriptionArn }).promise();
   }
 
 };
