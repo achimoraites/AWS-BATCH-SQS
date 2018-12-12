@@ -19,7 +19,6 @@ module.exports.queueProcessor = async event => {
     const Books = [];
     const actions = [];
     
-
     Records.forEach(record => {
       const recordObj = JSON.parse(record.body);
       // if true we are done
@@ -35,9 +34,7 @@ module.exports.queueProcessor = async event => {
 
     actions.push(batchWrite(Books));
     await Promise.all(actions);
-
     
-
     return {
       statusCode: 200,
       body: {
