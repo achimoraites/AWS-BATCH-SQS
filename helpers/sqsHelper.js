@@ -64,6 +64,8 @@ module.exports = {
     // in case we still have some books
     if (books.length > 0) {
       actions.push(sqs.sendMessageBatch(params(books)).promise());
+      // clean up
+      books = [];
     }
     // now send the final element to let the lambda know we have finished
     books.push(  entry(numOfElements + batchSize, { finished: true, topic }, batchSize) );
