@@ -2,7 +2,7 @@
 const AWS = require('aws-sdk');
 const dynamoDC = new AWS.DynamoDB.DocumentClient({});
 // helper
-// const { sendBatchedMessages } = require('./helpers/sqsHelper');
+const { publish, deleteTopic } = require('./helpers/snsHelper');
 
 // gets books from the queue and insert them in table
 // sends an email via sns to notify the user
@@ -25,17 +25,27 @@ module.exports.queueProcessor = async event => {
     // read records from the queue
     const { Records } = event;
     const actions = [];
+    let topic = null;
     Records.forEach(record => {
+      const recordObj = JSON.parse(record.body);
       // if true we are done
-      if('finished' in record.body) {
-
+      if('finished' in recordObj) {
+        // save topic
+        topic = recordObj.topic;
+        // send email to user
+        actions.push(publish('Your books have been inserted!',topic));
+       
         return;
       }
       // insert to dynamodb table
-      actions.push( dynamoDC.put(params(JSON.parse(record.body))).promise() );
+      actions.push( dynamoDC.put(params(recordObj)).promise() );
     });
 
     await Promise.all(actions);
+
+    // remove topic if exists
+    if (topic) await deleteTopic(topic);
+    
     
 
     return {

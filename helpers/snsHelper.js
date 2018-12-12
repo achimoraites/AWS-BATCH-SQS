@@ -13,11 +13,15 @@ module.exports = {
   createTopic(Name) {
     return sns.createTopic({Name}).promise();
   }, 
-  deleteTopic(TopicArn) {
+  deleteTopic({ TopicArn }) {
+    console.log('delete: ', TopicArn);
     return sns.deleteTopic({TopicArn}).promise();
   },
   subscribeEmail(email,{ TopicArn }) {
     return sns.subscribe(params('EMAIL',TopicArn, email)).promise();
+  },
+  publish(Message, { TopicArn }) {
+    return sns.publish({Message, TopicArn}).promise();
   }
 
 };
