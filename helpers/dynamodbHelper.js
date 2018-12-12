@@ -21,11 +21,9 @@ const putBookItem = ({isbn, title}) => ({
 });
 
 // create items array
-const processBooks = (Books) => {
-  return Books.map(book => putBookItem(book));
-};
+const processBooks = Books => Books.map(book => putBookItem(book));
 
-const params = (Books) => ({
+const params = Books => ({
   RequestItems: {
     "Books": Books
   }
