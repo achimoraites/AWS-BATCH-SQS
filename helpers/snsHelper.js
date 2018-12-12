@@ -10,18 +10,14 @@ const params = (Protocol, TopicArn, Endpoint) => ({
 
 module.exports = {
 
-  // this does not work
-  createEmailTopic(Name) {
+  createTopic(Name) {
     return sns.createTopic({Name}).promise();
-  },     
-  subscribeEmail(email,TopicArn) {
-    return sns.subscribe(params('EMAIL',TopicArn, email)).promise();
-  },     
-  subscribeLambda(lambda,TopicArn) {
-    return sns.subscribe(params('labda',TopicArn, lambda)).promise();
+  }, 
+  deleteTopic(TopicArn) {
+    return sns.deleteTopic({TopicArn}).promise();
   },
-  unsubscribe(SubscriptionArn) {
-    return sns.unsubscribe({ SubscriptionArn }).promise();
+  subscribeEmail(email,{ TopicArn }) {
+    return sns.subscribe(params('EMAIL',TopicArn, email)).promise();
   }
 
 };

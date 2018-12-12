@@ -26,6 +26,11 @@ module.exports.queueProcessor = async event => {
     const { Records } = event;
     const actions = [];
     Records.forEach(record => {
+      // if true we are done
+      if('finished' in record.body) {
+
+        return;
+      }
       // insert to dynamodb table
       actions.push( dynamoDC.put(params(JSON.parse(record.body))).promise() );
     });

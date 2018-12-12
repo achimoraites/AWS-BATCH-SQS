@@ -43,9 +43,10 @@ module.exports = {
    * uses sendMessageBatch to send them
    * @param numOfElements the number of the total elements to be generated
    * @param batchSize the size of each batch containing messages
+   * @param topic the topic the current user is subscribed to
    * @returns {Promise}
    */
-  sendBatchedMessages(numOfElements, batchSize) {
+  sendBatchedMessages(numOfElements, batchSize, topic) {
     let books = [];
     const actions = [];
     for (let i=0;i<numOfElements;i++) {
@@ -64,6 +65,9 @@ module.exports = {
     if (books.length > 0) {
       actions.push(sqs.sendMessageBatch(params(books)).promise());
     }
+    // now send the final element to let the lambda know we have finished
+    books.push(  entry(numOfElements + batchSize, { finished: true, topic }, batchSize) );
+    actions.push(sqs.sendMessageBatch(params(books)).promise());
 
     return Promise.all(actions);
   }
