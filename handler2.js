@@ -1,6 +1,6 @@
 'use strict';
 // helpers
-const { publish, deleteTopic } = require('./helpers/snsHelper');
+const { publish } = require('./helpers/snsHelper');
 const { batchWrite } = require('./helpers/dynamodbHelper');
 
 // gets books from the queue and insert them in table
