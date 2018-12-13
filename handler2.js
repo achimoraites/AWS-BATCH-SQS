@@ -50,8 +50,10 @@ module.exports.queueProcessor = async event => {
     };
 
   } finally {
-    // remove topic if exists
-    if (topic) await deleteTopic(topic);
+    // OPTIONAL: remove topic if exists
+    // if (topic) await deleteTopic(topic);
+
+    console.log('Done');
   }
 
 };
